@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using SalesMart.Data.DBContext;
+using SalesMart.Service.Implementation;
+using SalesMart.Service.Interface;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddDbContext<SalesMartContext>(c => c.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings:SalesMartConnectionString")));
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
+builder.Services.AddScoped<ISalesOrderService, SalesOrderService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
