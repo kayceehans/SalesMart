@@ -9,6 +9,6 @@ namespace SalesMart.Domain.DataTransferObject
     public class ProductDto
     {
         public string Name { get; set; }
-        public string Price { get; set; }
+        public decimal Price { get; set; }
     }
 }

@@ -29,7 +29,7 @@ namespace SalesMart.Service.Implementation
                 {
                     response.Content = products;
                     response.IsSuccess = true;
-                    response.Message = $"List of all available products. Count:{products.Count}";
+                    response.Message = $"List of all available products. Total:{products.Count}";
                 }
                 else
                 {
@@ -62,21 +62,21 @@ namespace SalesMart.Service.Implementation
 
                 if (saved > 0)
                 {
-                    response.Content = $"Product added successfully";
+                    response.Content = $"Product:{request.Name} added";
                     response.IsSuccess = true;
-                    response.Message = $"{request.Name} added succssfully";
+                    response.Message = $"product added succssfully";
                 }
                 else
                 {
                     response.Content = null;
                     response.IsSuccess = false;
-                    response.Message = "Unable to add products";
+                    response.Message = $"Unable to add product{request.Name}";
                 }
                 return response;
             }
             catch (Exception ex)
             {
-                var response = new Result<List<Product>>();
+                var response = new Result<string>();
                 response.IsSuccess = false;
                 response.ErrorMessage = $"Error occured:{ex.Message}";
                 return response;
