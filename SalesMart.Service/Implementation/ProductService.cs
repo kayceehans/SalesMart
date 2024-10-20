@@ -98,7 +98,7 @@ namespace SalesMart.Service.Implementation
                 {
                     response.Content = null;
                     response.IsSuccess = false;
-                    response.Message = "Unable to get products";
+                    response.Message = $"Not product for product ID:{productId}";
                 }
                 return response;
             }

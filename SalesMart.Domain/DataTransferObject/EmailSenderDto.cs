@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace SalesMart.Domain.DataTransferObject
 {
-    public class SalesOrderDto
+    public class EmailSenderDto
     {
-        public long Quantity { get; set; }
-        public int ProductId { get; set; }
-        public int CustomerId { get; set; }
+        public string EmailTo { get; set; }        
+        public string Subject { get; set; }
+        public string Body { get; set; }        
     }
 }

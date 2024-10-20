@@ -29,7 +29,7 @@ namespace SalesMart.Service.Implementation
                 {
                     response.Content = sales;
                     response.IsSuccess = true;
-                    response.Message = $"List of all available Sales. Count:{sales.Count}";
+                    response.Message = $"List of all available Sales. Total:{sales.Count}";
                 }
                 else
                 {
@@ -56,7 +56,8 @@ namespace SalesMart.Service.Implementation
                 {
                     CustomerId = sales.CustomerId,
                     ProductId = sales.ProductId,
-                    Quantity = sales.Quantity
+                    Quantity = sales.Quantity,
+                    OrderedDate = DateTime.Now
                 };
 
                 _SalesOrderrepo.Add(request);

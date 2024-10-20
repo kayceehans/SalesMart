@@ -10,7 +10,8 @@ namespace SalesMart.Domain.Entities
     {
         public int Id { get; set; }
         public long Quantity { get; set; }
-        public string ProductId { get; set; }
-        public string CustomerId { get; set; }
+        public int ProductId { get; set; }
+        public int CustomerId { get; set; }
+        public DateTime OrderedDate { get; set; }
     }
 }
