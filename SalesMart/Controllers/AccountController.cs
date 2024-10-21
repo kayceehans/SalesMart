@@ -32,6 +32,7 @@ namespace SalesMart.Controllers
         {
             try
             {
+                // Check client ID
                 var clientId = Request.Headers["ClientID"];
                 var getAPI_key = _configuration.GetSection("CLientID").Value;
 
@@ -40,6 +41,7 @@ namespace SalesMart.Controllers
                     return Unauthorized();
                 }
 
+                // Check Token
                 var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split().Last();
 
                 if (token == null)
@@ -67,6 +69,7 @@ namespace SalesMart.Controllers
                     };
                     return BadRequest(response);
                 };
+
                 _logger.LogInformation($"{emailFromToken} tried get list of all users");
 
                 await _activityLogService.AddActivityLog(new ActivityLogs
@@ -76,9 +79,11 @@ namespace SalesMart.Controllers
                     Email = emailFromToken
                 });
 
+                //Send request to get users
                 var GetAllUsers = await _userService.GetUsers();
 
                 _logger.LogInformation($"Get all users Response => {JsonConvert.SerializeObject(GetAllUsers)}");
+
                 await _activityLogService.AddActivityLog(new ActivityLogs
                 {
                     Activity = $"Get all users Response:{JsonConvert.SerializeObject(GetAllUsers)})",
@@ -90,7 +95,7 @@ namespace SalesMart.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation("An error occured signing up:" + " " + ex.Message + " " + ex.StackTrace);
+                _logger.LogError("An error occured signing up:" + " " + ex.Message + " " + ex.StackTrace);
                 return BadRequest(ex);
             }
         }
@@ -100,6 +105,7 @@ namespace SalesMart.Controllers
         {
             try
             {
+                // Check client ID
                 var clientId = Request.Headers["ClientID"];
                 var getAPI_key = _configuration.GetSection("CLientID").Value;
 
@@ -108,6 +114,7 @@ namespace SalesMart.Controllers
                     return Unauthorized();
                 }
 
+                // Check Token
                 var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split().Last();
 
                 if (token == null)
@@ -144,6 +151,8 @@ namespace SalesMart.Controllers
                     Email = emailFromToken
                 });
 
+                //Send request to get user by email
+
                 var GetUser = await _userService.GetUserByEmail(email);
 
                 _logger.LogInformation($"Get user Response => {JsonConvert.SerializeObject(GetUser)}");
@@ -158,7 +167,7 @@ namespace SalesMart.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation("An error occured getting user by email:" + " " + ex.Message + " " + ex.StackTrace);
+                _logger.LogError("An error occured getting user by email:" + " " + ex.Message + " " + ex.StackTrace);
                 return BadRequest(ex);
             }
         }

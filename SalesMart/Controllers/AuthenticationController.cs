@@ -31,7 +31,7 @@ namespace SalesMart.Controllers
             try
             {
                 _logger.LogInformation($"Attempt login with profile: {model.email} ");
-               
+                // Check client ID
                 var clientId = Request.Headers["ClientID"];
                 var getAPI_key = _configuration.GetSection("ClientID").Value;
 
@@ -40,14 +40,16 @@ namespace SalesMart.Controllers
                     return Unauthorized();
                 }
 
+                //Send request to log users and generate login jwt token
+
                 var resp = await _authenticationService.Login(model);
                 _logger.LogInformation($"login response: {JsonConvert.SerializeObject(resp)}");
-               
+
                 return Ok(resp);
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"login error occurs while logging-in: {ex.Message} ");               
+                _logger.LogError($"login error occurs while logging-in: {ex.Message} ");
                 return BadRequest(ex.Message);
             }
         }
@@ -57,6 +59,7 @@ namespace SalesMart.Controllers
         {
             try
             {
+                // Check client ID
                 var clientId = Request.Headers["ClientID"];
                 var getAPI_key = _configuration.GetSection("CLientID").Value;
 
@@ -73,6 +76,8 @@ namespace SalesMart.Controllers
                     Date = DateTime.Now,
                     Email = $"{model.Email} about to SignUp"
                 });
+
+                //Send request to sign up users
 
                 var signUpResponse = await _authenticationService.SignUp(model);
 
@@ -95,7 +100,7 @@ namespace SalesMart.Controllers
                     Email = model.Email
                 });
 
-                _logger.LogInformation("An error occured signing up:" + " " + ex.Message + " " + ex.StackTrace);
+                _logger.LogError("An error occured signing up:" + " " + ex.Message + " " + ex.StackTrace);
 
                 return BadRequest(ex);
             }

@@ -34,6 +34,70 @@ namespace SalesMart.Controllers
             _tokenMgt = tokenMgt;
         }
 
+        [HttpGet]
+        [Route("GetAllSalesOrder")]
+        public async Task<IActionResult> GetSales()
+        {
+            try
+            {
+                // check API client ID
+                var clientId = Request.Headers["ClientID"];
+                var getAPI_key = _configuration.GetSection("CLientID").Value;
+
+
+                if (clientId != getAPI_key)
+                {
+                    return Unauthorized();
+                }
+
+                // Validate Token
+
+                var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split().Last();
+
+                if (token == null)
+                {
+                    var response = new Result<string>()
+                    {
+                        Content = "Session expired!/Invalid Token.",
+                        IsSuccess = false,
+                        ErrorMessage = "Valid token is required to proceed",
+                        Message = "Please Login again"
+                    };
+                    return Unauthorized(response);
+                };
+
+                var emailFromToken = await _tokenMgt.DecryptTokenToUserdetails(token);
+
+                if (emailFromToken == null)
+                {
+                    var response = new Result<string>()
+                    {
+                        Content = "Token expired!/Invalid Token.",
+                        IsSuccess = false,
+                        ErrorMessage = "Valid token is required to proceed",
+                        Message = "Please Login with a valid token"
+                    };
+                    return BadRequest(response);
+                };
+
+                //Send Request to Add Sales order
+                var getSalesresponse = await _salesOrderService.GetAllSales();
+
+                _logger.LogInformation($"Get all Sales Response => {JsonConvert.SerializeObject(getSalesresponse)}");
+                await _activityLogService.AddActivityLog(new ActivityLogs
+                {
+                    Activity = $"Get All Sale Response:{getSalesresponse.Message})",
+                    Date = DateTime.Now,
+                    Email = emailFromToken
+                });
+                return Ok(getSalesresponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException);
+            }
+        }
+
         [HttpPost]
         [Route("AddSales")]
         public async Task<IActionResult> AddSalesOrder(SalesOrderDto request)
@@ -139,13 +203,14 @@ namespace SalesMart.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 return BadRequest(ex.InnerException);
             }
         }
 
-        [HttpGet]
-        [Route("GetAllSalesOrder")]
-        public async Task<IActionResult> GetSales()
+        [HttpDelete]
+        [Route("DeleteSalesOrder")]
+        public async Task<IActionResult> DeleteSales(int Id)
         {
             try
             {
@@ -189,26 +254,64 @@ namespace SalesMart.Controllers
                     return BadRequest(response);
                 };
 
-                //Send Request to Add Sales order
-                var getSalesresponse = await _salesOrderService.GetAllSales();
+                // Check user details
+                var getUser = await _userService.GetUserByEmail(emailFromToken);
 
-                _logger.LogInformation($"Get all Sales Response => {JsonConvert.SerializeObject(getSalesresponse)}");
+                if (!getUser.IsSuccess)
+                {
+                    var response = new Result<string>()
+                    {
+                        Content = "User Records not found.",
+                        IsSuccess = false,
+                        ErrorMessage = "Valid token is required to proceed",
+                        Message = "Please Login, and try again"
+                    };
+                    return BadRequest(response);
+                };
+
+                // Validate User Role
+
+                if (getUser.Content.RoleId != (int)RoleType.Admin)
+                {
+                    await _activityLogService.AddActivityLog(new ActivityLogs
+                    {
+                        Activity = $"{emailFromToken} is not permitted to delete Sales",
+                        Date = DateTime.Now,
+                        Email = emailFromToken
+                    });
+
+                    var response = new Result<string>()
+                    {
+                        Content = $"{getUser.Content.Email} Not permitted.",
+                        IsSuccess = false,
+                        ErrorMessage = "Profile not permiited",
+                        Message = "Only admin can delete Sales Order"
+                    };
+                    return BadRequest(response);
+                };
+
+                //Send Request to Add Sales order
+                var deleteSalesresponse = await _salesOrderService.DeleteSalesById(Id);
+
+                _logger.LogInformation($"Delete Sales Response => {JsonConvert.SerializeObject(deleteSalesresponse)}");
+
                 await _activityLogService.AddActivityLog(new ActivityLogs
                 {
-                    Activity = $"Get All Sale Response:{getSalesresponse.Message})",
+                    Activity = $"Delete Sale Response:{deleteSalesresponse.Message})",
                     Date = DateTime.Now,
                     Email = emailFromToken
                 });
-                return Ok(getSalesresponse);
+                return Ok(deleteSalesresponse);
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 return BadRequest(ex.InnerException);
             }
         }
         [HttpGet]
         [Route("GetSalesById")]
-        public async Task<IActionResult> GetSalesById(int id)
+        public async Task<IActionResult> GetSalesById(int Id)
         {
             try
             {
@@ -252,9 +355,9 @@ namespace SalesMart.Controllers
                     return BadRequest(response);
                 };
 
-              
+
                 //Send Request to Add Sales order
-                var getSaleresponse = await _salesOrderService.GetSalesById(id);
+                var getSaleresponse = await _salesOrderService.GetSalesById(Id);
 
                 _logger.LogInformation($"Get all Sales Response => {JsonConvert.SerializeObject(getSaleresponse)}");
                 await _activityLogService.AddActivityLog(new ActivityLogs
@@ -267,6 +370,7 @@ namespace SalesMart.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 return BadRequest(ex.InnerException);
             }
         }

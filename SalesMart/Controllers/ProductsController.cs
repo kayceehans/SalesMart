@@ -92,7 +92,7 @@ namespace SalesMart.Controllers
                 };
 
 
-                if (getUser.Content.RoleId != (int) RoleType.Admin)
+                if (getUser.Content.RoleId != (int)RoleType.Admin)
                 {
                     await _activityLogService.AddActivityLog(new ActivityLogs
                     {
@@ -135,7 +135,7 @@ namespace SalesMart.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation("An error occured getting product:" + " " + ex.Message + " " + ex.StackTrace);
+                _logger.LogError("An error occured getting product:" + " " + ex.Message + " " + ex.StackTrace);
                 return BadRequest(ex);
             }
         }
@@ -146,6 +146,7 @@ namespace SalesMart.Controllers
         {
             try
             {
+                // Check client ID
                 var clientId = Request.Headers["ClientID"];
                 var getAPI_key = _configuration.GetSection("CLientID").Value;
 
@@ -154,6 +155,7 @@ namespace SalesMart.Controllers
                     return Unauthorized();
                 }
 
+                // Check Token
                 var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split().Last();
 
                 if (token == null)
@@ -190,6 +192,7 @@ namespace SalesMart.Controllers
                     Email = emailFromToken
                 });
 
+                //Send request to get products
                 var getProducts = await _productService.GetProducts();
 
                 _logger.LogInformation($"Get all products Response => {JsonConvert.SerializeObject(getProducts)}");
@@ -204,7 +207,7 @@ namespace SalesMart.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation("An error occured getting products:" + " " + ex.Message + " " + ex.StackTrace);
+                _logger.LogError("An error occured getting products:" + " " + ex.Message + " " + ex.StackTrace);
                 return BadRequest(ex);
             }
 
@@ -215,6 +218,7 @@ namespace SalesMart.Controllers
         {
             try
             {
+                // Check client ID
                 var clientId = Request.Headers["ClientID"];
                 var getAPI_key = _configuration.GetSection("CLientID").Value;
 
@@ -223,6 +227,7 @@ namespace SalesMart.Controllers
                     return Unauthorized();
                 }
 
+                // Check Token
                 var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split().Last();
 
                 if (token == null)
@@ -259,6 +264,7 @@ namespace SalesMart.Controllers
                     Email = emailFromToken
                 });
 
+                //Send request to get products by ID
                 var getProduct = await _productService.GetProductById(id);
 
                 _logger.LogInformation($"Get product Response => {JsonConvert.SerializeObject(getProduct)}");
@@ -273,7 +279,7 @@ namespace SalesMart.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation("An error occured getting product:" + " " + ex.Message + " " + ex.StackTrace);
+                _logger.LogError("An error occured getting product:" + " " + ex.Message + " " + ex.StackTrace);
                 return BadRequest(ex);
             }
 

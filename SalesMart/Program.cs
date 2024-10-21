@@ -22,6 +22,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddTransient<ISMTPEmailSender, SMTPEmailSender>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<ITokenMgtService, TokenMgtService>();
+builder.Services.AddScoped<IDashBoardService, DashBoardService>();
 builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
 
 builder.Services.Configure<SMTPSettingsDto>(builder.Configuration.GetSection("EmailSettings"));
