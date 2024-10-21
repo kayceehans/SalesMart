@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -8,6 +9,7 @@ using SalesMart.Domain.Common.Generic;
 using SalesMart.Domain.DataTransferObject;
 using SalesMart.Domain.Entities;
 using SalesMart.Infrastructure.Utilities;
+using SalesMart.Service.SignalR;
 using SalesMart.Service.Implementation;
 using SalesMart.Service.Interface;
 using static SalesMart.Domain.Enums.Enum;
@@ -24,7 +26,8 @@ namespace SalesMart.Controllers
         private readonly IConfiguration _configuration;
         private readonly ITokenMgtService _tokenMgt;
         private readonly ILogger<SalesController> _logger;
-        public SalesController(ISalesOrderService salesOrderService, IUserService userService, IActivityLogService activityLogService, IConfiguration configuration, ILogger<SalesController> logger, ITokenMgtService tokenMgt)
+        private readonly IHubContext<MessageHub, IMessageHubClient> _messageHub;
+        public SalesController(ISalesOrderService salesOrderService, IUserService userService, IActivityLogService activityLogService, IConfiguration configuration, ILogger<SalesController> logger, ITokenMgtService tokenMgt, IHubContext<MessageHub, IMessageHubClient> messageHub)
         {
             _salesOrderService = salesOrderService;
             _userService = userService;
@@ -32,6 +35,7 @@ namespace SalesMart.Controllers
             _configuration = configuration;
             _logger = logger;
             _tokenMgt = tokenMgt;
+            _messageHub = messageHub;
         }
 
         [HttpGet]
@@ -199,6 +203,10 @@ namespace SalesMart.Controllers
                     Date = DateTime.Now,
                     Email = emailFromToken
                 });
+
+                // Send sales update to clients apps with SignalR
+                await _messageHub.Clients.All.SendSalesUpdate($"Item with Id:{request.ProductId} sold, Quantity:{request.Quantity}");
+                
                 return Ok(addSalesresponse);
             }
             catch (Exception ex)
@@ -287,6 +295,7 @@ namespace SalesMart.Controllers
                         ErrorMessage = "Profile not permiited",
                         Message = "Only admin can delete Sales Order"
                     };
+
                     return BadRequest(response);
                 };
 
@@ -301,6 +310,7 @@ namespace SalesMart.Controllers
                     Date = DateTime.Now,
                     Email = emailFromToken
                 });
+
                 return Ok(deleteSalesresponse);
             }
             catch (Exception ex)

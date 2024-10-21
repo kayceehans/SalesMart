@@ -5,8 +5,10 @@ using SalesMart.Data.DBContext;
 using SalesMart.Data.Repositories;
 using SalesMart.Domain.DataTransferObject;
 using SalesMart.Infrastructure.Utilities;
+using SalesMart.Service.SignalR;
 using SalesMart.Service.Implementation;
 using SalesMart.Service.Interface;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +26,7 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<ITokenMgtService, TokenMgtService>();
 builder.Services.AddScoped<IDashBoardService, DashBoardService>();
 builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
-
+builder.Services.AddSignalR();
 builder.Services.Configure<SMTPSettingsDto>(builder.Configuration.GetSection("EmailSettings"));
 //builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(c =>
@@ -96,5 +98,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<MessageHub>("/salesUpdate");
 
 app.Run();
