@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SalesMart.Data.Repositories
-{    
+{
     public class GenericRepo<T> : IGenericRepo<T> where T : class
     {
         private readonly SalesMartContext context = null;
@@ -58,13 +58,22 @@ namespace SalesMart.Data.Repositories
 
         public bool Remove(int id)
         {
-            var product = table.Find(id);
-            if (product is { })
+            try
             {
-                table.Remove(product);
-                return true;
+                var product = table.Find(id);
+                if (product is { })
+                {
+                    table.Remove(product);
+                    return true;
+                }
+                return false;
             }
-            return false;
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
         }
 
         public void Add(in T sender)

@@ -1,4 +1,5 @@
-﻿using SalesMart.Data.Repositories;
+﻿using Microsoft.Extensions.Logging;
+using SalesMart.Data.Repositories;
 using SalesMart.Domain.Common.Generic;
 using SalesMart.Domain.DataTransferObject;
 using SalesMart.Domain.Entities;
@@ -14,11 +15,11 @@ namespace SalesMart.Service.Implementation
     public class UserService : IUserService
     {
         private readonly IGenericRepo<User> _userRepo;
-        private readonly IGenericRepo<ActivityLogs> _activityLogsRepo;
-        public UserService(IGenericRepo<User> userRepo, IGenericRepo<ActivityLogs> activityLogsRepo)
+        private readonly ILogger<UserService> _logger;
+        public UserService(IGenericRepo<User> userRepo, ILogger<UserService> logger)
         {
             _userRepo = userRepo;
-            _activityLogsRepo = activityLogsRepo;
+            _logger = logger;
         }
         public async Task<Result<List<User>>> GetUsers()
         {
@@ -42,6 +43,7 @@ namespace SalesMart.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 var response = new Result<List<User>>();
                 response.IsSuccess = false;
                 response.ErrorMessage = $"Error occured:{ex.Message}";
@@ -82,6 +84,7 @@ namespace SalesMart.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 var response = new Result<string>();
                 response.IsSuccess = false;
                 response.ErrorMessage = $"Error occured:{ex.Message}";
@@ -110,6 +113,7 @@ namespace SalesMart.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 var response = new Result<User>();
                 response.IsSuccess = false;
                 response.ErrorMessage = $"Error occured:{ex.Message}";

@@ -18,7 +18,7 @@ namespace SalesMart.Data.DBContext
         public DbSet<Product> products { get; set; }
         public DbSet<Role> roles { get; set; }  
         public DbSet<User> users { get; set; }
-        public DbSet<SalesOrder> orders { get; set; }   
+        public DbSet<SalesOrder> SalesOrder { get; set; }   
         public DbSet<ActivityLogs> activityLogs { get; set; }
     }
 }
