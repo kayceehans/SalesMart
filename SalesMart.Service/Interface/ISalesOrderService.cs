@@ -13,6 +13,7 @@ namespace SalesMart.Service.Interface
     {
         Task<Result<List<SalesOrder>>> GetAllSales();
         Task<Result<string>> AddSales(SalesOrderDto sales);
-        Task<Result<SalesOrder>> GetSalesById(int id);       
+        Task<Result<SalesOrder>> GetSalesById(int id);
+        Task<Result<string>> DeleteSalesById(int id);
     }
 }

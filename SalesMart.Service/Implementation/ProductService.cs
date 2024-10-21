@@ -1,4 +1,5 @@
-﻿using SalesMart.Data.Repositories;
+﻿using Microsoft.Extensions.Logging;
+using SalesMart.Data.Repositories;
 using SalesMart.Domain.Common.Generic;
 using SalesMart.Domain.DataTransferObject;
 using SalesMart.Domain.Entities;
@@ -14,9 +15,11 @@ namespace SalesMart.Service.Implementation
     public class ProductService : IProductService
     {
         private readonly IGenericRepo<Product> _productRepo;
-        public ProductService(IGenericRepo<Product> productRepo)
+        private readonly ILogger<ProductService> _logger;
+        public ProductService(IGenericRepo<Product> productRepo, ILogger<ProductService> logger)
         {
             _productRepo = productRepo;
+            _logger = logger;
         }
 
         public async Task<Result<List<Product>>> GetProducts()
@@ -41,6 +44,7 @@ namespace SalesMart.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 var response = new Result<List<Product>>();
                 response.IsSuccess = false;
                 response.ErrorMessage = $"Error occured:{ex.Message}";
@@ -76,6 +80,7 @@ namespace SalesMart.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 var response = new Result<string>();
                 response.IsSuccess = false;
                 response.ErrorMessage = $"Error occured:{ex.Message}";
@@ -98,12 +103,13 @@ namespace SalesMart.Service.Implementation
                 {
                     response.Content = null;
                     response.IsSuccess = false;
-                    response.Message = "Unable to get products";
+                    response.Message = $"Not product for product ID:{productId}";
                 }
                 return response;
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 var response = new Result<Product>();
                 response.IsSuccess = false;
                 response.ErrorMessage = $"Error occured:{ex.Message}";
@@ -133,6 +139,7 @@ namespace SalesMart.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 var response = new Result<string>();
                 response.IsSuccess = false;
                 response.ErrorMessage = $"Error occured:{ex.Message}";

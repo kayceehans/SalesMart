@@ -1,4 +1,5 @@
-﻿using SalesMart.Data.Repositories;
+﻿using Microsoft.Extensions.Logging;
+using SalesMart.Data.Repositories;
 using SalesMart.Domain.Common.Generic;
 using SalesMart.Domain.DataTransferObject;
 using SalesMart.Domain.Entities;
@@ -14,10 +15,11 @@ namespace SalesMart.Service.Implementation
     public class SalesOrderService : ISalesOrderService
     {
         private readonly IGenericRepo<SalesOrder> _SalesOrderrepo;
-
-        public SalesOrderService(IGenericRepo<SalesOrder> SalesOrderrepo)
+        private readonly ILogger<SalesOrderService> _logger;
+        public SalesOrderService(IGenericRepo<SalesOrder> SalesOrderrepo, ILogger<SalesOrderService> logger)
         {
             _SalesOrderrepo = SalesOrderrepo;
+            _logger = logger;
         }
         public async Task<Result<List<SalesOrder>>> GetAllSales()
         {
@@ -29,7 +31,7 @@ namespace SalesMart.Service.Implementation
                 {
                     response.Content = sales;
                     response.IsSuccess = true;
-                    response.Message = $"List of all available Sales. Count:{sales.Count}";
+                    response.Message = $"List of all available Sales. Total:{sales.Count}";
                 }
                 else
                 {
@@ -41,6 +43,7 @@ namespace SalesMart.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 var response = new Result<List<SalesOrder>>();
                 response.IsSuccess = false;
                 response.ErrorMessage = $"Error occured:{ex.Message}";
@@ -56,7 +59,8 @@ namespace SalesMart.Service.Implementation
                 {
                     CustomerId = sales.CustomerId,
                     ProductId = sales.ProductId,
-                    Quantity = sales.Quantity
+                    Quantity = sales.Quantity,
+                    OrderedDate = DateTime.Now
                 };
 
                 _SalesOrderrepo.Add(request);
@@ -78,6 +82,7 @@ namespace SalesMart.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 var response = new Result<string>();
                 response.IsSuccess = false;
                 response.ErrorMessage = $"Error occured:{ex.Message}";
@@ -106,7 +111,49 @@ namespace SalesMart.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ex.Message}");
                 var response = new Result<SalesOrder>();
+                response.IsSuccess = false;
+                response.ErrorMessage = $"Error occured:{ex.Message}";
+                return response;
+            }
+        }
+        public async Task<Result<string>> DeleteSalesById(int id)
+        {
+            try
+            {
+                var response = new Result<string>();
+
+                var getSales = await _SalesOrderrepo.SelectAsync(x => x.Id == id);
+                if (getSales == null)
+                {
+                    response.Content = $"Sales with Id:{id} not found";
+                    response.IsSuccess = true;
+                    response.Message = "Sale not found";                    
+                    return response;
+                }
+
+                _SalesOrderrepo.Remove(getSales.Id);
+                var Update = await _SalesOrderrepo.SaveAsync() > 0;               
+
+                if (Update)
+                {
+                    response.Content = $"Sales with Id:{id} removed";
+                    response.IsSuccess = true;
+                    response.Message = "Sale deleted successfully";
+                }
+                else
+                {
+                    response.Content = $"Delete failed for sale with Id:{id}"; ;
+                    response.IsSuccess = false;
+                    response.Message = "Unable to remove sales record, please try again";
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message}");
+                var response = new Result<string>();
                 response.IsSuccess = false;
                 response.ErrorMessage = $"Error occured:{ex.Message}";
                 return response;

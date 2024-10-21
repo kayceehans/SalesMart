@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesMart", "SalesMart\SalesMart.csproj", "{8835D094-9155-4AD8-87E3-C3CB4F7D9327}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesMart", "SalesMart\SalesMart.csproj", "{8835D094-9155-4AD8-87E3-C3CB4F7D9327}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesMart.Service", "SalesMart.Service\SalesMart.Service.csproj", "{83B7344B-911F-4372-8719-E36309D1D39F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesMart.Service", "SalesMart.Service\SalesMart.Service.csproj", "{83B7344B-911F-4372-8719-E36309D1D39F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesMart.Domain", "SalesMart.Domain\SalesMart.Domain.csproj", "{EAC75ED9-7095-437B-A080-7E5D18C6EECE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesMart.Domain", "SalesMart.Domain\SalesMart.Domain.csproj", "{EAC75ED9-7095-437B-A080-7E5D18C6EECE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesMart.Data", "SalesMart.Data\SalesMart.Data.csproj", "{F2E27206-5F49-44BC-B25E-924511DE964A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesMart.Data", "SalesMart.Data\SalesMart.Data.csproj", "{F2E27206-5F49-44BC-B25E-924511DE964A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesMart.Infrastructure", "Infrastructure\SalesMart.Infrastructure.csproj", "{7C51397D-B3F3-420A-9B84-973EB4E64413}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{F2E27206-5F49-44BC-B25E-924511DE964A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2E27206-5F49-44BC-B25E-924511DE964A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2E27206-5F49-44BC-B25E-924511DE964A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C51397D-B3F3-420A-9B84-973EB4E64413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C51397D-B3F3-420A-9B84-973EB4E64413}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C51397D-B3F3-420A-9B84-973EB4E64413}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C51397D-B3F3-420A-9B84-973EB4E64413}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

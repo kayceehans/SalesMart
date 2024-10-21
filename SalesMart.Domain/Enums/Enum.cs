@@ -10,7 +10,7 @@ namespace SalesMart.Domain.Enums
     {
         public enum RoleType
         {
-          Customer = 0,
+          Customer = 1,
           Admin 
         }
     }
